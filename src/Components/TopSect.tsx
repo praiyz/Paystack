@@ -1,4 +1,5 @@
 import { FaShoppingCart } from "react-icons/fa";
+import { FaTshirt } from "react-icons/fa";
 
 function TopSect({
   setShow,
@@ -11,7 +12,16 @@ function TopSect({
     <>
       <div className="flex justify-between items-center px-8 pt-2 pb-4 sticky w-full top-0 z-50 bg-white shadow-lg border-b-[2px]">
         <div className="flex justify-center items-center relative">
-          <p className="font-semibold text-base text-black">Tomato 2</p>
+          <div className="flex gap-3">
+            <div className="text-3xl font-bold">
+              <FaTshirt />
+            </div>
+            <div>
+              <p className="font-semibold text-base text-black">
+                Jo's Men Wears
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-row flex-wrap text-black">
