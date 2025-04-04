@@ -18,13 +18,12 @@ interface CartProps {
   handleChange: (item: CartItem, value: number) => void;
 }
 
-const Cart = ({ cart, setCart, handleChange }: CartProps) => {
-  const [price, setPrice] = useState(0);
+const Cart: React.FC<CartProps> = ({ cart, setCart, handleChange }) => {
+  const [price, setPrice] = useState<number>(0);
 
   const handleRemove = (id: string) => {
-    const arr = cart.filter((item) => item.id !== id);
-    setCart(arr);
-    handlePrice();
+    const newCart = cart.filter((item) => item.id !== id);
+    setCart(newCart);
     toast.error("Item removed from cart", {
       position: "top-center",
       autoClose: 1000,
@@ -38,9 +37,8 @@ const Cart = ({ cart, setCart, handleChange }: CartProps) => {
   };
 
   const handlePrice = () => {
-    let ans = 0;
-    cart.forEach((item) => (ans += item.amount * item.price));
-    setPrice(ans);
+    const total = cart.reduce((acc, item) => acc + item.amount * item.price, 0);
+    setPrice(total);
   };
 
   useEffect(() => {
@@ -50,21 +48,21 @@ const Cart = ({ cart, setCart, handleChange }: CartProps) => {
   const config = {
     reference: new Date().getTime().toString(),
     email: "Jo'smenwears@gmail.com",
-    publicKey: import.meta.env.VITE_PAYSTACK_TEST_PUBLIC_KEY,
+    publicKey: import.meta.env.VITE_PAYSTACK_TEST_PUBLIC_KEY as string,
+    amount: price * 100, // Paystack expects amount in kobo
   };
 
-  const onSuccess = (reference: any) => {
-    toast.success(`Payment successfully completed , refrence:${reference}`);
+  const onSuccess = (reference: { reference: string }) => {
+    toast.success(
+      `Payment successfully completed, reference: ${reference.reference}`
+    );
   };
 
-  const onClose = () => {
+  const onClose: () => void = () => {
     toast.error("Your payment was unsuccessful, try again later!");
   };
 
-  const initializePayment = usePaystackPayment({
-    ...config,
-    amount: price * 100,
-  });
+  const initializePayment = usePaystackPayment(config);
 
   return (
     <>
@@ -83,7 +81,7 @@ const Cart = ({ cart, setCart, handleChange }: CartProps) => {
                 key={item.id}
               >
                 <div className="flex w-80">
-                  <img src={item.img} alt="" className="w-20 h-16" />
+                  <img src={item.img} alt={item.name} className="w-20 h-16" />
                   <p className="font-bold ml-5 mt-4">{item.name}</p>
                 </div>
                 <div className="flex items-center justify-between pb-2 mt-2">
@@ -93,9 +91,9 @@ const Cart = ({ cart, setCart, handleChange }: CartProps) => {
                   >
                     -
                   </button>
-                  <button>{item.amount}</button>
+                  <span>{item.amount}</span>
                   <button
-                    className="px-2.5 py-1.5 text-lg font-bold mr-1.5"
+                    className="px-2.5 py-1.5 text-lg font-bold ml-1.5"
                     onClick={() => handleChange(item, 1)}
                   >
                     +
@@ -103,7 +101,6 @@ const Cart = ({ cart, setCart, handleChange }: CartProps) => {
                 </div>
                 <div>
                   <span className="text-brandColor py-1.5 px-2.5 rounded-lg mr-2.5">
-                    {" "}
                     $ {item.price}
                   </span>
                   <button
@@ -121,14 +118,13 @@ const Cart = ({ cart, setCart, handleChange }: CartProps) => {
               <div className="flex justify-between mt-8">
                 <span className="text-lg font-semibold">Total price :</span>
                 <span className="text-lg font-semibold text-brandColor">
-                  {" "}
                   ${price}
                 </span>
               </div>
               <section className="flex justify-between mt-12">
                 <button
-                  onClick={() => initializePayment(onSuccess as any, onClose)}
-                  className="bg-green-600 text-white py-2 px-4 text-lg w-full rounded-xl hover:border-2 hover:bg-white hover:text-green-600 hover:border-green-600 ease-in-out duration:300"
+                  onClick={() => initializePayment({ onSuccess, onClose })}
+                  className="bg-green-600 text-white py-2 px-4 text-lg w-full rounded-xl hover:border-2 hover:bg-white hover:text-green-600 hover:border-green-600 ease-in-out duration-300"
                 >
                   Checkout
                 </button>
