@@ -49,7 +49,7 @@ const Cart = ({ cart, setCart, handleChange }: CartProps) => {
 
   const config = {
     reference: new Date().getTime().toString(),
-    email: "praiseolatunji22@gmail.com",
+    email: "Jo'smenwears@gmail.com",
     publicKey: import.meta.env.VITE_PAYSTACK_TEST_PUBLIC_KEY,
   };
 
