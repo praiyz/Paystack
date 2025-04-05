@@ -14,7 +14,7 @@ const Cards = ({
   const { name, price, img } = item;
 
   return (
-    <section className="p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
+    <section className="w-full">
       <div className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-xl hover:border-green-600">
         <img className="h-64 w-full object-cover" src={img} alt={name} />
         <div className="p-4 flex flex-col">
