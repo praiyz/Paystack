@@ -24,107 +24,100 @@ const Cart: React.FC<CartProps> = ({ cart, setCart, handleChange }) => {
   const handleRemove = (id: string) => {
     const newCart = cart.filter((item) => item.id !== id);
     setCart(newCart);
-    toast.error("Item removed from cart", {
-      position: "top-center",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  };
-
-  const handlePrice = () => {
-    const total = cart.reduce((acc, item) => acc + item.amount * item.price, 0);
-    setPrice(total);
+    toast.error("Item removed from cart", { autoClose: 1000 });
   };
 
   useEffect(() => {
-    handlePrice();
+    const total = cart.reduce((acc, item) => acc + item.amount * item.price, 0);
+    setPrice(total);
   }, [cart]);
 
   const config = {
     reference: new Date().getTime().toString(),
     email: "Jo'smenwears@gmail.com",
     publicKey: import.meta.env.VITE_PAYSTACK_TEST_PUBLIC_KEY as string,
-    amount: price * 100, // Paystack expects amount in kobo
+    amount: price * 100,
   };
 
   const onSuccess = (reference: { reference: string }) => {
-    toast.success(
-      `Payment successfully completed, reference: ${reference.reference}`
-    );
+    toast.success(`Payment successful! Ref: ${reference.reference}`);
   };
 
-  const onClose: () => void = () => {
-    toast.error("Your payment was unsuccessful, try again later!");
+  const onClose = () => {
+    toast.error("Payment unsuccessful, try again!");
   };
 
   const initializePayment = usePaystackPayment(config);
 
   return (
     <>
-      <section className="w-full align-center text-black items-center mx-auto container flex justify-center">
-        <section className="mt-8 px-2">
+      <section className="w-full mx-auto container flex justify-center px-4">
+        <section className="mt-8 w-full max-w-4xl">
           {cart.length === 0 ? (
-            <div className="container mx-auto justify-center">
+            <div className="flex justify-center">
               <p className="text-center font-semibold text-xl">
-                Nothing in cart yet
+                Your cart is empty
               </p>
             </div>
           ) : (
             cart.map((item) => (
               <div
-                className="flex items-center justify-between mt-10 pb-2 border-b-2"
+                className="flex flex-col md:flex-row items-center justify-between gap-4 mt-6 p-4 border-b"
                 key={item.id}
               >
-                <div className="flex w-80">
-                  <img src={item.img} alt={item.name} className="w-20 h-16" />
-                  <p className="font-bold ml-5 mt-4">{item.name}</p>
+                <div className="flex items-center gap-4 w-full md:w-auto">
+                  <img
+                    src={item.img}
+                    alt={item.name}
+                    className="w-20 h-16 object-cover rounded"
+                  />
+                  <p className="font-semibold text-lg">{item.name}</p>
                 </div>
-                <div className="flex items-center justify-between pb-2 mt-2">
+
+                <div className="flex items-center gap-3">
                   <button
-                    className="px-2.5 py-1.5 text-lg font-bold mr-1.5"
+                    className="px-3 py-1 text-lg font-bold border rounded"
                     onClick={() => handleChange(item, -1)}
                   >
                     -
                   </button>
-                  <span>{item.amount}</span>
+                  <span className="text-lg">{item.amount}</span>
                   <button
-                    className="px-2.5 py-1.5 text-lg font-bold ml-1.5"
+                    className="px-3 py-1 text-lg font-bold border rounded"
                     onClick={() => handleChange(item, 1)}
                   >
                     +
                   </button>
                 </div>
-                <div>
-                  <span className="text-brandColor py-1.5 px-2.5 rounded-lg mr-2.5">
-                    $ {item.price}
+
+                <div className="flex items-center gap-3">
+                  <span className="text-lg font-semibold text-green-600">
+                    ${item.price}
                   </span>
                   <button
-                    className="py-2 px-2.5 font-semibold bg-red-100 rounded-lg cursor-pointer text-red-500 hover:text-red-600"
+                    className="p-2 rounded-lg bg-red-100 text-red-500 hover:text-red-600"
                     onClick={() => handleRemove(item.id)}
                   >
-                    <FaTrash title="Remove from cart" />
+                    <FaTrash />
                   </button>
                 </div>
               </div>
             ))
           )}
+
           {cart.length > 0 && (
             <>
-              <div className="flex justify-between mt-8">
-                <span className="text-lg font-semibold">Total price :</span>
-                <span className="text-lg font-semibold text-brandColor">
+              <div className="flex justify-between mt-6 px-4">
+                <span className="text-lg font-semibold">Total:</span>
+                <span className="text-lg font-semibold text-green-600">
                   ${price}
                 </span>
               </div>
-              <section className="flex justify-between mt-12">
+
+              <section className="flex justify-center mt-8">
                 <button
                   onClick={() => initializePayment({ onSuccess, onClose })}
-                  className="bg-green-600 text-white py-2 px-4 text-lg w-full rounded-xl hover:border-2 hover:bg-white hover:text-green-600 hover:border-green-600 ease-in-out duration-300"
+                  className="w-full max-w-xs bg-green-600 text-white py-3 px-4 text-lg rounded-lg transition duration-300 hover:bg-white hover:text-green-600 hover:border-2 hover:border-green-600"
                 >
                   Checkout
                 </button>

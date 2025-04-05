@@ -17,36 +17,36 @@ function Details({ handleClick }: DetailsProps) {
     if (word === "All") {
       setCategory(list);
     } else {
-      const filtered = list.filter((item) => item.kind === word);
-      setCategory(filtered);
+      setCategory(list.filter((item) => item.kind === word));
     }
     setActiveTab(word);
   };
 
   return (
-    <section className="container pt-4 mx-auto w-full bg-bgColor">
-      <section className="px-6 flex flex-row justify-between">
-        <div className="relative w-80 h-11 mt-4">
+    <section className="container mx-auto w-full bg-bgColor px-4 py-6">
+      {/* Search and Filters Section */}
+      <section className="flex flex-col md:flex-row md:justify-between items-center mb-6">
+        {/* Search Bar */}
+        <div className="relative w-full max-w-md h-11 mb-4 md:mb-0">
           <input
             type="text"
             onChange={(event) => setQuery(event.target.value)}
-            className="w-full h-full py-4 px-10 text-base text-black rounded-lg border-2 border-black"
+            className="w-full h-full py-4 pl-10 pr-4 text-base text-black rounded-lg border-2 border-black"
             placeholder="Search clothing..."
           />
-          <i>
-            <FaSearch className="absolute left-4 top-4 text-lg w-4 h-4 text-center text-black focus:outline-none" />
-          </i>
+          <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-lg text-black" />
         </div>
 
-        <div className="flex flex-wrap mt-4 lg:mb-4 mb-8">
+        {/* Category Filter Buttons */}
+        <div className="flex flex-wrap justify-center gap-2">
           {["All", "Jeans", "Shirts", "Shoes"].map((word) => (
             <button
               key={word}
               onClick={() => handleBtns(word)}
-              className={`mr-2 text-brandColor border-brandColor border-2 py-1 px-6 md:w-24 h-10 rounded-lg text-lg ${
+              className={`px-4 py-2 md:w-24 rounded-lg text-lg border-2 transition ${
                 activeTab === word
-                  ? "bg-brandColor outline-none text-white"
-                  : ""
+                  ? "bg-brandColor text-white border-brandColor"
+                  : "text-brandColor border-brandColor hover:bg-brandColor hover:text-white"
               }`}
             >
               {word}
@@ -55,12 +55,14 @@ function Details({ handleClick }: DetailsProps) {
         </div>
       </section>
 
-      <section className="flex flex-row flex-wrap">
+      {/* Products Grid */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {category
-          .filter((item) => {
-            if (query === "") return true;
-            return item.name.toLowerCase().includes(query.toLowerCase());
-          })
+          .filter((item) =>
+            query === ""
+              ? true
+              : item.name.toLowerCase().includes(query.toLowerCase())
+          )
           .map((item) => (
             <Cards key={item.id} item={item} handleClick={handleClick} />
           ))}
